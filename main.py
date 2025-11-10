@@ -17,14 +17,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 
 # Supabase PostgreSQL Database URL
-# Replace with your actual Supabase credentials
-SUPABASE_DB_URL = os.environ.get('SUPABASE_URL', 'postgresql://postgres:olawanle@db.mvpugxwlufztwqunjysf.supabase.co:5432/postgres')
+# Production-ready configuration
+SUPABASE_DB_URL = 'postgresql://postgres.mvpugxwlufztwqunjysf:olawanle@aws-0-us-east-1.pooler.supabase.com:6543/postgres'
 
-# Use Supabase URL or fallback to SQLite for local development
+# Use environment variable or Supabase URL
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', SUPABASE_DB_URL)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# PostgreSQL connection pooling settings
+# PostgreSQL connection pooling settings for Supabase
 if 'postgresql' in app.config['SQLALCHEMY_DATABASE_URI']:
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_pre_ping': True,
@@ -33,6 +33,7 @@ if 'postgresql' in app.config['SQLALCHEMY_DATABASE_URI']:
         'max_overflow': 20,
         'connect_args': {
             'connect_timeout': 10,
+            'sslmode': 'require',
         }
     }
 
@@ -500,11 +501,18 @@ def init_db():
     """Initialize database with tables"""
     with app.app_context():
         try:
+            # Test database connection first
+            print('📡 Testing database connection...')
+            db.engine.connect()
+            print('✓ Database connection successful')
+            
             # Create all tables
+            print('📊 Creating database tables...')
             db.create_all()
             print('✓ Database tables created successfully')
             
             # Create admin user if doesn't exist
+            print('👤 Checking admin user...')
             admin = User.query.filter_by(username='admin').first()
             if not admin:
                 admin = User(
@@ -520,11 +528,19 @@ def init_db():
                 print('✓ Admin user created: username=admin, password=admin123')
             else:
                 print('✓ Admin user already exists')
+            
+            print('\n' + '='*60)
+            print('✓ Database initialization complete!')
+            print('='*60 + '\n')
                 
         except Exception as e:
-            print(f'✗ Database initialization error: {e}')
+            print(f'\n✗ Database initialization error: {e}')
+            print('\n⚠️  IMPORTANT: Update your Supabase connection string!')
+            print('   Read: SUPABASE_CONNECTION_GUIDE.md for instructions\n')
             db.session.rollback()
-            raise
+            # Don't raise in production - let app start and show error page
+            if os.environ.get('DEBUG', 'False') == 'True':
+                raise
 
 # ==================== RUN APP ====================
 

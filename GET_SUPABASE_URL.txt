@@ -1,0 +1,67 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║     🔌 GET YOUR SUPABASE CONNECTION STRING                   ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+⚠️  IMPORTANT: You need to get your ACTUAL connection string from Supabase!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 QUICK STEPS:
+
+1. Go to: https://app.supabase.com/project/mvpugxwlufztwqunjysf
+
+2. Click: Settings (gear icon) → Database
+
+3. Scroll to: "Connection string" section
+
+4. Select: "Connection pooling" mode
+
+5. Click: URI tab
+
+6. Copy the connection string
+
+7. Replace [YOUR-PASSWORD] with your actual database password
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔐 DON'T KNOW YOUR PASSWORD?
+
+1. Go to: Settings → Database
+2. Scroll to: "Database password"
+3. Click: "Reset database password"
+4. Copy and save the new password
+5. Use it in your connection string
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✏️  UPDATE THESE FILES:
+
+After getting your connection string, update:
+
+1. main.py (line ~17):
+   SUPABASE_DB_URL = 'your-actual-connection-string-here'
+
+2. render.yaml (line ~11):
+   value: your-actual-connection-string-here
+
+3. .env (create this file):
+   DATABASE_URL=your-actual-connection-string-here
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 THEN DEPLOY:
+
+git add .
+git commit -m "Update Supabase connection string"
+git push origin main
+
+Then deploy to Render - it will work!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 For detailed instructions, read:
+   SUPABASE_CONNECTION_GUIDE.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
