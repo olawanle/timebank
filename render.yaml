@@ -10,11 +10,4 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: timebank-db
-          property: connectionString
-
-databases:
-  - name: timebank-db
-    databaseName: timebank
-    user: timebank
+        value: postgresql://postgres:olawanle@db.mvpugxwlufztwqunjysf.supabase.co:5432/postgres

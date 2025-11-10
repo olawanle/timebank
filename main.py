@@ -15,10 +15,28 @@ app = Flask(__name__)
 
 # Configuration for production and development
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(16))
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///timebank.db')
+
+# Supabase PostgreSQL Database URL
+# Replace with your actual Supabase credentials
+SUPABASE_DB_URL = os.environ.get('SUPABASE_URL', 'postgresql://postgres:olawanle@db.mvpugxwlufztwqunjysf.supabase.co:5432/postgres')
+
+# Use Supabase URL or fallback to SQLite for local development
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', SUPABASE_DB_URL)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Fix for Render PostgreSQL URL
+# PostgreSQL connection pooling settings
+if 'postgresql' in app.config['SQLALCHEMY_DATABASE_URI']:
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+        'pool_size': 10,
+        'max_overflow': 20,
+        'connect_args': {
+            'connect_timeout': 10,
+        }
+    }
+
+# Fix for Render PostgreSQL URL (if needed)
 if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
     app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
 
@@ -481,22 +499,32 @@ def make_admin(user_id):
 def init_db():
     """Initialize database with tables"""
     with app.app_context():
-        db.create_all()
-        
-        # Create admin user if doesn't exist
-        admin = User.query.filter_by(username='admin').first()
-        if not admin:
-            admin = User(
-                username='admin',
-                email='admin@timebank.com',
-                wallet_address=generate_wallet_address(),
-                is_admin=True,
-                token_balance=1000.0
-            )
-            admin.set_password('admin123')
-            db.session.add(admin)
-            db.session.commit()
-            print('Admin user created: username=admin, password=admin123')
+        try:
+            # Create all tables
+            db.create_all()
+            print('✓ Database tables created successfully')
+            
+            # Create admin user if doesn't exist
+            admin = User.query.filter_by(username='admin').first()
+            if not admin:
+                admin = User(
+                    username='admin',
+                    email='admin@timebank.com',
+                    wallet_address=generate_wallet_address(),
+                    is_admin=True,
+                    token_balance=1000.0
+                )
+                admin.set_password('admin123')
+                db.session.add(admin)
+                db.session.commit()
+                print('✓ Admin user created: username=admin, password=admin123')
+            else:
+                print('✓ Admin user already exists')
+                
+        except Exception as e:
+            print(f'✗ Database initialization error: {e}')
+            db.session.rollback()
+            raise
 
 # ==================== RUN APP ====================
 
