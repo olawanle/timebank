@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Request Service - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="text-center mb-4">
+                    <i class="bi bi-hand-thumbs-up-fill" style="font-size: 4rem; color: var(--secondary);"></i>
+                    <h2 class="mt-3">Request a Service</h2>
+                    <p class="text-secondary">Post your service need to the marketplace</p>
+                </div>
+
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-wallet2"></i> <strong>Your Balance:</strong> {{ "%.1f"|format(current_user.token_balance) }} tokens
+                </div>
+
+                <form method="POST" action="{{ url_for('request_service') }}">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            <i class="bi bi-card-heading"></i> Service Title
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" required 
+                               placeholder="e.g., Need Help with Website Design">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="bi bi-text-paragraph"></i> Description
+                        </label>
+                        <textarea class="form-control" id="description" name="description" rows="4" required 
+                                  placeholder="Describe what help you need in detail..."></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="category" class="form-label">
+                                <i class="bi bi-tag"></i> Category
+                            </label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">Choose category...</option>
+                                <option value="tutoring">Tutoring</option>
+                                <option value="consulting">Consulting</option>
+                                <option value="repairs">Repairs</option>
+                                <option value="design">Design</option>
+                                <option value="programming">Programming</option>
+                                <option value="writing">Writing</option>
+                                <option value="translation">Translation</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="duration" class="form-label">
+                                <i class="bi bi-clock"></i> Duration (Hours / Tokens)
+                            </label>
+                            <input type="number" class="form-control" id="duration" name="duration" 
+                                   min="0.5" step="0.5" max="{{ current_user.token_balance }}" required 
+                                   placeholder="e.g., 2.5">
+                            <small class="text-secondary">1 hour = 1 token</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> <strong>Important:</strong> 
+                        Tokens will be deducted when someone accepts your request. Make sure you have sufficient balance.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send"></i> Post Service Request
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card mt-4">
+                <h5><i class="bi bi-lightbulb"></i> Tips for Requesting Services</h5>
+                <ul class="text-secondary mb-0">
+                    <li>Be specific about your needs and expectations</li>
+                    <li>Set realistic duration estimates</li>
+                    <li>Check the marketplace to see similar requests</li>
+                    <li>Ensure you have enough tokens before posting</li>
+                    <li>Community members will see your request and can accept it</li>
+                </ul>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('marketplace') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-shop"></i> Browse Marketplace
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

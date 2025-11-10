@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Login - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="text-center mb-4">
+                    <i class="bi bi-box-arrow-in-right" style="font-size: 4rem; color: var(--primary);"></i>
+                    <h2 class="mt-3">Welcome Back</h2>
+                    <p class="text-secondary">Login to access your time bank</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person"></i> Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" required 
+                               placeholder="Enter your username" autofocus>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock"></i> Password
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" required 
+                               placeholder="Enter your password">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="bi bi-box-arrow-in-right"></i> Login to Dashboard
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-secondary">
+                            Don't have an account? 
+                            <a href="{{ url_for('register') }}" style="color: var(--primary);">Register now</a>
+                        </p>
+                    </div>
+                </form>
+
+                <hr style="border-color: rgba(0, 212, 255, 0.2);">
+
+                <div class="alert alert-info">
+                    <strong><i class="bi bi-info-circle"></i> Demo Account:</strong><br>
+                    Username: <code>admin</code><br>
+                    Password: <code>admin123</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

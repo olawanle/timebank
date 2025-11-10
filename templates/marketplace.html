@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Marketplace - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="hero-title"><i class="bi bi-shop"></i> Service Marketplace</h1>
+        <p class="lead text-secondary">Browse and accept service requests from the community</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0"><i class="bi bi-wallet2"></i> Your Balance: {{ "%.1f"|format(current_user.token_balance) }} tokens</h5>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('request_service') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Post New Request
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if services %}
+    <div class="row g-4">
+        {% for service in services %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="mb-0">{{ service.title }}</h4>
+                    <span class="badge badge-info">{{ service.category }}</span>
+                </div>
+                
+                <p class="text-secondary mb-3">{{ service.description }}</p>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary">
+                            <i class="bi bi-clock"></i> Duration:
+                        </span>
+                        <strong style="color: var(--primary);">{{ service.duration }} hours</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary">
+                            <i class="bi bi-coin"></i> Cost:
+                        </span>
+                        <strong style="color: var(--accent);">{{ service.duration }} tokens</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary">
+                            <i class="bi bi-person"></i> Requester:
+                        </span>
+                        <strong>{{ service.requester.username }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-secondary">
+                            <i class="bi bi-calendar"></i> Posted:
+                        </span>
+                        <span>{{ service.created_at.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                    {% if service.requester_id != current_user.id %}
+                    <a href="{{ url_for('accept_service', service_id=service.id) }}" 
+                       class="btn btn-primary w-100"
+                       onclick="return confirm('Accept this service request? You will earn {{ service.duration }} tokens.');">
+                        <i class="bi bi-check-circle"></i> Accept & Earn {{ service.duration }} Tokens
+                    </a>
+                    {% else %}
+                    <button class="btn btn-outline-primary w-100" disabled>
+                        <i class="bi bi-person"></i> Your Request
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 5rem; color: var(--text-secondary); opacity: 0.5;"></i>
+                <h3 class="mt-4">No Service Requests Available</h3>
+                <p class="text-secondary mb-4">Be the first to post a service request!</p>
+                <a href="{{ url_for('request_service') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create Service Request
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <h4><i class="bi bi-info-circle"></i> How the Marketplace Works</h4>
+                <hr style="border-color: rgba(0, 212, 255, 0.2);">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 style="color: var(--primary);">For Service Providers:</h5>
+                        <ul class="text-secondary">
+                            <li>Browse available service requests</li>
+                            <li>Accept requests that match your skills</li>
+                            <li>Earn tokens automatically when you accept</li>
+                            <li>Build your reputation with each service</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 style="color: var(--secondary);">For Service Requesters:</h5>
+                        <ul class="text-secondary">
+                            <li>Post what help you need</li>
+                            <li>Set the duration (tokens required)</li>
+                            <li>Wait for community members to accept</li>
+                            <li>Tokens transfer automatically on acceptance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

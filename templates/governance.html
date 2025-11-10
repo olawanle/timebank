@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}DAO Governance - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="hero-title"><i class="bi bi-bank"></i> DAO Governance</h1>
+        <p class="lead text-secondary">Decentralized decision making powered by time tokens</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="mb-2 mb-md-0">
+                        <h5 class="mb-1"><i class="bi bi-coin"></i> Your Voting Power</h5>
+                        <p class="text-secondary mb-0">{{ "%.1f"|format(current_user.token_balance) }} tokens = {{ "%.1f"|format(current_user.token_balance) }} votes</p>
+                    </div>
+                    <a href="{{ url_for('create_proposal') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create Proposal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if proposals %}
+    <div class="row g-4">
+        {% for proposal in proposals %}
+        <div class="col-12">
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="flex-grow-1">
+                        <h3 class="mb-2">{{ proposal.title }}</h3>
+                        <p class="text-secondary mb-2">
+                            <i class="bi bi-person"></i> Proposed by: <strong>{{ proposal.proposer.username }}</strong>
+                        </p>
+                    </div>
+                    <span class="badge badge-{% if proposal.status == 'active' %}info{% elif proposal.status == 'passed' %}success{% else %}danger{% endif %} ms-2">
+                        {{ proposal.status.upper() }}
+                    </span>
+                </div>
+
+                <p class="mb-3">{{ proposal.description }}</p>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: var(--success);"></i>
+                            <div class="stat-value" style="font-size: 1.8rem;">{{ proposal.votes_for }}</div>
+                            <div class="stat-label">Votes For</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-hand-thumbs-down" style="font-size: 1.5rem; color: var(--accent);"></i>
+                            <div class="stat-value" style="font-size: 1.8rem;">{{ proposal.votes_against }}</div>
+                            <div class="stat-label">Votes Against</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-calendar" style="font-size: 1.5rem; color: var(--primary);"></i>
+                            <div class="stat-label">Created</div>
+                            <div style="font-size: 0.9rem; color: var(--text-primary);">{{ proposal.created_at.strftime('%Y-%m-%d') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-hourglass" style="font-size: 1.5rem; color: var(--warning);"></i>
+                            <div class="stat-label">Ends</div>
+                            <div style="font-size: 0.9rem; color: var(--text-primary);">{{ proposal.ends_at.strftime('%Y-%m-%d') }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if proposal.status == 'active' %}
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('vote', proposal_id=proposal.id, vote_type='for') }}" 
+                       class="btn btn-success flex-grow-1"
+                       onclick="return confirm('Cast your vote FOR this proposal?');">
+                        <i class="bi bi-hand-thumbs-up"></i> Vote For
+                    </a>
+                    <a href="{{ url_for('vote', proposal_id=proposal.id, vote_type='against') }}" 
+                       class="btn btn-danger flex-grow-1"
+                       onclick="return confirm('Cast your vote AGAINST this proposal?');">
+                        <i class="bi bi-hand-thumbs-down"></i> Vote Against
+                    </a>
+                </div>
+                {% else %}
+                <div class="alert alert-{% if proposal.status == 'passed' %}success{% else %}danger{% endif %} mb-0">
+                    <i class="bi bi-{% if proposal.status == 'passed' %}check-circle{% else %}x-circle{% endif %}"></i>
+                    <strong>Voting Ended:</strong> This proposal has {{ proposal.status }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 5rem; color: var(--text-secondary); opacity: 0.5;"></i>
+                <h3 class="mt-4">No Proposals Yet</h3>
+                <p class="text-secondary mb-4">Be the first to create a governance proposal!</p>
+                <a href="{{ url_for('create_proposal') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create First Proposal
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <h4><i class="bi bi-info-circle"></i> How DAO Governance Works</h4>
+                <hr style="border-color: rgba(0, 212, 255, 0.2);">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 style="color: var(--primary);"><i class="bi bi-lightbulb"></i> Creating Proposals</h5>
+                        <ul class="text-secondary">
+                            <li>Any member can create a proposal</li>
+                            <li>Describe changes or ideas for the community</li>
+                            <li>Set voting duration (default 7 days)</li>
+                            <li>Proposals are visible to all members</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 style="color: var(--secondary);"><i class="bi bi-hand-index-thumb"></i> Voting System</h5>
+                        <ul class="text-secondary">
+                            <li>Voting power = your token balance</li>
+                            <li>One vote per user per proposal</li>
+                            <li>Vote FOR or AGAINST proposals</li>
+                            <li>Proposals pass if FOR votes exceed AGAINST</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0">
+                    <i class="bi bi-shield-check"></i> <strong>Decentralized:</strong> 
+                    All decisions are made by the community through transparent voting. Your tokens give you a voice!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

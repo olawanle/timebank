@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Create Proposal - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="text-center mb-4">
+                    <i class="bi bi-lightbulb-fill" style="font-size: 4rem; color: var(--primary);"></i>
+                    <h2 class="mt-3">Create Governance Proposal</h2>
+                    <p class="text-secondary">Submit your idea to the DAO community</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('create_proposal') }}">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            <i class="bi bi-card-heading"></i> Proposal Title
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" required 
+                               placeholder="e.g., Increase Welcome Bonus to 20 Tokens">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="bi bi-text-paragraph"></i> Detailed Description
+                        </label>
+                        <textarea class="form-control" id="description" name="description" rows="6" required 
+                                  placeholder="Explain your proposal in detail. What changes do you want to make and why?"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="days" class="form-label">
+                            <i class="bi bi-calendar"></i> Voting Duration (Days)
+                        </label>
+                        <select class="form-select" id="days" name="days">
+                            <option value="3">3 Days</option>
+                            <option value="7" selected>7 Days (Recommended)</option>
+                            <option value="14">14 Days</option>
+                            <option value="30">30 Days</option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> <strong>Note:</strong> 
+                        Once created, your proposal will be visible to all members. 
+                        Voting power is based on token balance.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send"></i> Submit Proposal
+                        </button>
+                        <a href="{{ url_for('governance') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left"></i> Back to Governance
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card mt-4">
+                <h5><i class="bi bi-lightbulb"></i> Proposal Guidelines</h5>
+                <ul class="text-secondary mb-0">
+                    <li>Be clear and specific about what you're proposing</li>
+                    <li>Explain the benefits to the community</li>
+                    <li>Consider potential drawbacks and address them</li>
+                    <li>Keep proposals focused on one main idea</li>
+                    <li>Engage with voters and answer questions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

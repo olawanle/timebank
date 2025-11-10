@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TimeBank - Crypto Time Banking{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7b2cbf;
+            --accent: #ff006e;
+            --dark-bg: #0a0e27;
+            --card-bg: #151b3d;
+            --text-primary: #ffffff;
+            --text-secondary: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1f3a 100%);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(0, 212, 255, 0.1) 0%, 
+                rgba(123, 44, 191, 0.1) 25%,
+                rgba(255, 0, 110, 0.1) 50%,
+                rgba(123, 44, 191, 0.1) 75%,
+                rgba(0, 212, 255, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Floating particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, rgba(0, 212, 255, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(255, 0, 110, 0.3), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(123, 44, 191, 0.3), transparent),
+                radial-gradient(2px 2px at 80% 10%, rgba(0, 212, 255, 0.3), transparent),
+                radial-gradient(1px 1px at 90% 60%, rgba(255, 0, 110, 0.3), transparent);
+            background-size: 200% 200%;
+            animation: particleFloat 20s ease-in-out infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(-40px) translateX(-10px); }
+            75% { transform: translateY(-20px) translateX(10px); }
+        }
+
+        .navbar {
+            background: rgba(21, 27, 61, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            padding: 1rem 0;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.1);
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, 
+                var(--primary), 
+                var(--secondary),
+                var(--accent),
+                var(--primary));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s ease infinite;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6));
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            position: relative;
+        }
+        
+        /* Animated underline */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover {
+            color: var(--primary) !important;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+        }
+        
+        /* Animated shine effect */
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4),
+                        0 0 30px rgba(123, 44, 191, 0.3);
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 1.2), 
+                rgba(123, 44, 191, 1.2));
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* Animated border glow on hover */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                var(--primary), 
+                var(--secondary), 
+                var(--accent), 
+                var(--primary));
+            background-size: 400%;
+            border-radius: 16px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            animation: borderGlow 3s linear infinite;
+        }
+        
+        .card:hover::before {
+            opacity: 0.5;
+        }
+        
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3),
+                        0 0 20px rgba(123, 44, 191, 0.2);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-control, .form-select {
+            background: rgba(10, 14, 39, 0.6);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(10, 14, 39, 0.8);
+            border-color: var(--primary);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25),
+                        0 0 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .form-control:hover, .form-select:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-label {
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            animation: slideInRight 0.5s ease-out;
+            transition: all 0.3s ease;
+        }
+        
+        .alert:hover {
+            transform: translateX(5px);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-error, .alert-danger {
+            background: rgba(255, 0, 110, 0.2);
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+        }
+
+        .alert-info {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInScale 0.6s ease-out;
+        }
+        
+        /* Pulsing glow effect */
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, 
+                rgba(0, 212, 255, 0.3) 0%, 
+                transparent 70%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.6s ease;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .stat-card:hover::after {
+            transform: translate(-50%, -50%) scale(2);
+        }
+
+        .stat-card:hover {
+            transform: scale(1.08) rotate(2deg);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4),
+                        0 0 30px rgba(255, 0, 110, 0.2);
+            border-color: rgba(0, 212, 255, 0.6);
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.2), 
+                rgba(123, 44, 191, 0.2));
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, 
+                var(--primary), 
+                var(--secondary), 
+                var(--accent),
+                var(--primary));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s ease infinite;
+        }
+        
+        @keyframes gradientText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .stat-label {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+        
+        .badge-success:hover {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+        
+        .badge-warning:hover {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+        }
+
+        .badge-info {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        
+        .badge-info:hover {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+        }
+
+        .badge-danger {
+            background: rgba(255, 0, 110, 0.2);
+            color: var(--accent);
+            box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+        }
+        
+        .badge-danger:hover {
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.6);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .table {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+        
+        .table * {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .table thead {
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+            background: transparent !important;
+        }
+        
+        .table thead th {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+        
+        .table tbody {
+            background: transparent !important;
+        }
+        
+        .table tbody td {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent !important;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(90deg, 
+                rgba(0, 212, 255, 0.1), 
+                rgba(123, 44, 191, 0.1)) !important;
+            transform: translateX(5px);
+            box-shadow: -5px 0 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        /* Fix for table responsive wrapper */
+        .table-responsive {
+            background: transparent !important;
+        }
+
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            word-break: break-all;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .wallet-address:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4),
+                        inset 0 0 10px rgba(0, 212, 255, 0.2);
+            transform: scale(1.02);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .glow-text {
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8),
+                         0 0 40px rgba(123, 44, 191, 0.6),
+                         0 0 60px rgba(255, 0, 110, 0.4);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(0, 212, 255, 0.8),
+                             0 0 40px rgba(123, 44, 191, 0.6),
+                             0 0 60px rgba(255, 0, 110, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(0, 212, 255, 1),
+                             0 0 60px rgba(123, 44, 191, 0.8),
+                             0 0 90px rgba(255, 0, 110, 0.6);
+            }
+        }
+
+        footer {
+            background: rgba(21, 27, 61, 0.95);
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .hero-section {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, 
+                var(--primary), 
+                var(--secondary), 
+                var(--accent),
+                var(--primary));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            animation: gradientText 4s ease infinite, float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin-bottom: 2rem;
+        }
+
+        /* Override ALL grey text to white - FORCE EVERYTHING */
+        .text-secondary,
+        .text-muted,
+        small,
+        p,
+        ul,
+        li,
+        span,
+        div,
+        td,
+        th,
+        label,
+        .small,
+        .lead {
+            color: #ffffff !important;
+        }
+        
+        /* Specific overrides for common grey text */
+        body, body * {
+            color: #ffffff !important;
+        }
+        
+        /* Keep only specific colored elements */
+        .badge, .btn, .alert, .stat-value, .hero-title, .navbar-brand, 
+        .wallet-address, .glow-text, a, .nav-link {
+            color: inherit !important;
+        }
+        
+        a {
+            color: var(--primary) !important;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .stat-value {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* FINAL OVERRIDE - FORCE ALL TEXT TO WHITE */
+        body, body p, body span, body div, body li, body td, body th, 
+        body label, body small, body h1, body h2, body h3, body h4, body h5, body h6,
+        .text-secondary, .text-muted, .lead, .small,
+        .card p, .card span, .card div, .card li, .card small,
+        .table, .table *, .form-label, .form-control::placeholder {
+            color: #ffffff !important;
+        }
+        
+        /* Force transparent backgrounds for tables */
+        table, thead, tbody, tr, td, th,
+        .table, .table thead, .table tbody, .table tr, .table td, .table th,
+        .table-responsive {
+            background-color: transparent !important;
+            background: transparent !important;
+        }
+        
+        /* Keep buttons, badges, and special elements with their colors */
+        .btn, .btn *, .badge, .badge *, .alert, .alert *,
+        .stat-value, .hero-title, .navbar-brand, .glow-text {
+            color: inherit !important;
+        }
+        
+        /* Links stay colored */
+        a, .nav-link {
+            color: var(--primary) !important;
+        }
+        
+        a:hover, .nav-link:hover {
+            color: var(--primary) !important;
+        }
+        
+        /* Icon animations */
+        .bi {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover .bi,
+        .btn:hover .bi,
+        .stat-card:hover .bi {
+            transform: scale(1.2) rotate(5deg);
+        }
+        
+        /* Pulse animation for important icons */
+        .bi-coin, .bi-clock-history, .bi-wallet2 {
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Rotate animation for settings/admin icons */
+        .bi-shield-lock:hover, .bi-gear:hover {
+            animation: rotate 0.5s ease-in-out;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Smooth page transitions */
+        main {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* Hover effect for all clickable elements */
+        button, a, .btn, .badge, .nav-link {
+            cursor: pointer;
+        }
+        
+        /* Ripple effect on buttons */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Stagger animation for lists */
+        .table tbody tr,
+        .list-group-item {
+            animation: fadeInUp 0.4s ease-out backwards;
+        }
+        
+        .table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Glow effect for important numbers */
+        .stat-value, .badge {
+            animation: numberGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes numberGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="bi bi-clock-history"></i> TimeBank
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('how_it_works') }}">How It Works</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('marketplace') }}">Marketplace</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('governance') }}">Governance</a>
+                    </li>
+                    {% if current_user.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-2" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p class="mb-2" style="color: #ffffff;">
+                <i class="bi bi-clock-history"></i> TimeBank - Decentralized Time Economy
+            </p>
+            <p class="small" style="color: #ffffff;">
+                1 Token = 1 Hour of Service | Built with Python & Flask
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

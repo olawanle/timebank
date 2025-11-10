@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="hero-title">Welcome, {{ current_user.username }}!</h1>
+        <p class="text-secondary">Your TimeBank Dashboard</p>
+    </div>
+
+    <!-- Wallet Info -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <h5><i class="bi bi-wallet2"></i> Your Wallet Address</h5>
+                <div class="wallet-address mt-2">
+                    {{ current_user.wallet_address }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="bi bi-coin" style="font-size: 2rem; color: var(--primary);"></i>
+                <div class="stat-value">{{ "%.1f"|format(current_user.token_balance) }}</div>
+                <div class="stat-label">Token Balance</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="bi bi-arrow-up-circle" style="font-size: 2rem; color: var(--success);"></i>
+                <div class="stat-value">{{ "%.1f"|format(current_user.hours_earned) }}</div>
+                <div class="stat-label">Hours Earned</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="bi bi-arrow-down-circle" style="font-size: 2rem; color: var(--accent);"></i>
+                <div class="stat-value">{{ "%.1f"|format(current_user.hours_spent) }}</div>
+                <div class="stat-label">Hours Spent</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="bi bi-star-fill" style="font-size: 2rem; color: var(--warning);"></i>
+                <div class="stat-value">{{ "%.1f"|format(current_user.reputation_score) }}</div>
+                <div class="stat-label">Reputation Score</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card text-center">
+                <i class="bi bi-briefcase" style="font-size: 3rem; color: var(--primary);"></i>
+                <h4 class="mt-3">Offer a Service</h4>
+                <p class="text-secondary">Record a service you provided and earn tokens</p>
+                <a href="{{ url_for('offer_service') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Offer Service
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-center">
+                <i class="bi bi-hand-thumbs-up" style="font-size: 3rem; color: var(--secondary);"></i>
+                <h4 class="mt-3">Request Help</h4>
+                <p class="text-secondary">Post a service request and spend your tokens</p>
+                <a href="{{ url_for('request_service') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Request Service
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <h3><i class="bi bi-clock-history"></i> Recent Transactions</h3>
+                <hr style="border-color: rgba(0, 212, 255, 0.2);">
+                {% if transactions %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>From/To</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trans in transactions %}
+                            <tr>
+                                <td>{{ trans.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <span class="badge badge-{% if trans.transaction_type == 'service' %}success{% elif trans.transaction_type == 'bonus' %}info{% else %}warning{% endif %}">
+                                        {{ trans.transaction_type }}
+                                    </span>
+                                </td>
+                                <td>{{ trans.description }}</td>
+                                <td>
+                                    {% if trans.to_user_id == current_user.id %}
+                                    <span style="color: var(--success);">+{{ trans.amount }}</span>
+                                    {% else %}
+                                    <span style="color: var(--accent);">-{{ trans.amount }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if trans.from_user_id == current_user.id and trans.to_user %}
+                                    <i class="bi bi-arrow-right"></i> {{ trans.to_user.username }}
+                                    {% elif trans.to_user_id == current_user.id and trans.from_user %}
+                                    <i class="bi bi-arrow-left"></i> {{ trans.from_user.username }}
+                                    {% else %}
+                                    System
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-secondary py-4">No transactions yet. Start by offering or requesting services!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Service History -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <h3><i class="bi bi-list-check"></i> Service History</h3>
+                <hr style="border-color: rgba(0, 212, 255, 0.2);">
+                {% if services %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Duration</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Partner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in services %}
+                            <tr>
+                                <td>{{ service.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ service.title }}</td>
+                                <td><span class="badge badge-info">{{ service.category }}</span></td>
+                                <td>{{ service.duration }}h</td>
+                                <td>
+                                    {% if service.provider_id == current_user.id %}
+                                    <span class="badge badge-success">Provided</span>
+                                    {% else %}
+                                    <span class="badge badge-warning">Requested</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge badge-{% if service.status == 'completed' %}success{% elif service.status == 'pending' %}warning{% else %}danger{% endif %}">
+                                        {{ service.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if service.provider_id == current_user.id and service.requester %}
+                                    {{ service.requester.username }}
+                                    {% elif service.requester_id == current_user.id and service.provider %}
+                                    {{ service.provider.username }}
+                                    {% else %}
+                                    Pending
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-secondary py-4">No services yet. Start trading time!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Register - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus-fill" style="font-size: 4rem; color: var(--primary);"></i>
+                    <h2 class="mt-3">Create Your Account</h2>
+                    <p class="text-secondary">Join the decentralized time economy</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person"></i> Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" required 
+                               placeholder="Choose a unique username">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope"></i> Email Address
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" required 
+                               placeholder="your@email.com">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock"></i> Password
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" required 
+                               placeholder="Create a strong password" minlength="6">
+                        <small class="text-secondary">Minimum 6 characters</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-gift"></i> <strong>Welcome Bonus:</strong> Get 10 free tokens when you register!
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="bi bi-rocket-takeoff"></i> Create Account & Get Wallet
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-secondary">
+                            Already have an account? 
+                            <a href="{{ url_for('login') }}" style="color: var(--primary);">Login here</a>
+                        </p>
+                    </div>
+                </form>
+
+                <hr style="border-color: rgba(0, 212, 255, 0.2);">
+
+                <div class="mt-3">
+                    <h5 class="text-center mb-3">What You'll Get:</h5>
+                    <ul class="text-secondary">
+                        <li><i class="bi bi-wallet2" style="color: var(--primary);"></i> Unique blockchain wallet address</li>
+                        <li><i class="bi bi-coin" style="color: var(--secondary);"></i> 10 welcome tokens to start trading</li>
+                        <li><i class="bi bi-star" style="color: var(--accent);"></i> Initial reputation score of 5.0</li>
+                        <li><i class="bi bi-people" style="color: var(--success);"></i> Access to the marketplace</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

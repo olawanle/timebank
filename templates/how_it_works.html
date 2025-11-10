@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}How It Works - TimeBank{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="hero-title">How TimeBank Works</h1>
+        <p class="lead text-secondary">A visual guide to the time-for-token exchange system</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-diagram-3" style="color: var(--primary);"></i>
+                    The Time Economy Cycle
+                </h2>
+                <div class="text-center mb-4">
+                    <svg width="100%" height="300" viewBox="0 0 600 300">
+                        <!-- Circle -->
+                        <circle cx="300" cy="150" r="120" fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="5,5"/>
+                        
+                        <!-- Icons and Labels -->
+                        <g>
+                            <circle cx="300" cy="30" r="25" fill="var(--card-bg)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="300" y="38" text-anchor="middle" fill="var(--primary)" font-size="20">👤</text>
+                            <text x="300" y="15" text-anchor="middle" fill="var(--text-primary)" font-size="14">Register</text>
+                        </g>
+                        
+                        <g>
+                            <circle cx="470" cy="150" r="25" fill="var(--card-bg)" stroke="var(--secondary)" stroke-width="2"/>
+                            <text x="470" y="158" text-anchor="middle" fill="var(--secondary)" font-size="20">💼</text>
+                            <text x="520" y="155" text-anchor="middle" fill="var(--text-primary)" font-size="14">Offer Service</text>
+                        </g>
+                        
+                        <g>
+                            <circle cx="300" cy="270" r="25" fill="var(--card-bg)" stroke="var(--accent)" stroke-width="2"/>
+                            <text x="300" y="278" text-anchor="middle" fill="var(--accent)" font-size="20">🪙</text>
+                            <text x="300" y="300" text-anchor="middle" fill="var(--text-primary)" font-size="14">Earn Tokens</text>
+                        </g>
+                        
+                        <g>
+                            <circle cx="130" cy="150" r="25" fill="var(--card-bg)" stroke="var(--success)" stroke-width="2"/>
+                            <text x="130" y="158" text-anchor="middle" fill="var(--success)" font-size="20">🤝</text>
+                            <text x="70" y="155" text-anchor="middle" fill="var(--text-primary)" font-size="14">Spend Tokens</text>
+                        </g>
+                        
+                        <!-- Arrows -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="var(--primary)" />
+                            </marker>
+                        </defs>
+                        <path d="M 320 50 Q 400 80 450 130" fill="none" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 450 170 Q 380 240 320 260" fill="none" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 280 260 Q 200 230 150 170" fill="none" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 150 130 Q 220 70 280 50" fill="none" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card">
+                <h3><i class="bi bi-1-circle" style="color: var(--primary);"></i> Getting Started</h3>
+                <hr style="border-color: rgba(0, 212, 255, 0.3);">
+                <h5>Create Your Account</h5>
+                <p class="text-secondary">Sign up with your email and username. You'll instantly receive:</p>
+                <ul class="text-secondary">
+                    <li>A unique blockchain wallet address</li>
+                    <li>10 welcome tokens to start trading</li>
+                    <li>A reputation score of 5.0</li>
+                </ul>
+                <div class="wallet-address mt-3">
+                    <small>Example: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <h3><i class="bi bi-2-circle" style="color: var(--secondary);"></i> Offering Services</h3>
+                <hr style="border-color: rgba(123, 44, 191, 0.3);">
+                <h5>Share Your Skills</h5>
+                <p class="text-secondary">Record services you've provided:</p>
+                <ul class="text-secondary">
+                    <li>Tutoring, repairs, consulting, design</li>
+                    <li>Specify duration in hours</li>
+                    <li>Earn 1 token per hour</li>
+                    <li>Build your reputation (+0.1 per service)</li>
+                </ul>
+                <div class="badge badge-success mt-2">
+                    <i class="bi bi-trophy"></i> Reputation increases with each service
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <h3><i class="bi bi-3-circle" style="color: var(--accent);"></i> Requesting Help</h3>
+                <hr style="border-color: rgba(255, 0, 110, 0.3);">
+                <h5>Get Services You Need</h5>
+                <p class="text-secondary">Post service requests to the marketplace:</p>
+                <ul class="text-secondary">
+                    <li>Describe what help you need</li>
+                    <li>Set the duration (tokens required)</li>
+                    <li>Wait for community members to accept</li>
+                    <li>Tokens are transferred automatically</li>
+                </ul>
+                <div class="badge badge-warning mt-2">
+                    <i class="bi bi-wallet2"></i> Ensure sufficient token balance
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <h3><i class="bi bi-4-circle" style="color: var(--success);"></i> DAO Governance</h3>
+                <hr style="border-color: rgba(16, 185, 129, 0.3);">
+                <h5>Shape the Community</h5>
+                <p class="text-secondary">Participate in decentralized governance:</p>
+                <ul class="text-secondary">
+                    <li>Create proposals for community changes</li>
+                    <li>Vote with your token balance as voting power</li>
+                    <li>Proposals pass based on majority votes</li>
+                    <li>One vote per user per proposal</li>
+                </ul>
+                <div class="badge badge-info mt-2">
+                    <i class="bi bi-bank"></i> True decentralized decision making
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <h2 class="text-center mb-4">Key Principles</h2>
+                <div class="row g-4">
+                    <div class="col-md-4 text-center">
+                        <div class="stat-card">
+                            <i class="bi bi-clock" style="font-size: 3rem; color: var(--primary);"></i>
+                            <h4 class="mt-3">Equal Value</h4>
+                            <p class="text-secondary">Every hour is worth 1 token, regardless of the service type</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="stat-card">
+                            <i class="bi bi-shield-check" style="font-size: 3rem; color: var(--secondary);"></i>
+                            <h4 class="mt-3">Trust Based</h4>
+                            <p class="text-secondary">Build reputation through verified service exchanges</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="stat-card">
+                            <i class="bi bi-globe" style="font-size: 3rem; color: var(--accent);"></i>
+                            <h4 class="mt-3">Decentralized</h4>
+                            <p class="text-secondary">Community-governed with transparent blockchain principles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        {% if not current_user.is_authenticated %}
+        <h2 class="mb-4">Ready to Start Trading Time?</h2>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3">
+            <i class="bi bi-person-plus"></i> Create Account
+        </a>
+        <a href="{{ url_for('home') }}" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-house"></i> Back to Home
+        </a>
+        {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-speedometer2"></i> Go to Dashboard
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
