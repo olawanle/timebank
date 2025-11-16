@@ -7,6 +7,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import text
 from datetime import datetime
 import secrets
 import os
@@ -174,6 +175,16 @@ def home():
     """Home page explaining TimeBank"""
     return render_template('home.html')
 
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    try:
+        # Test database connection
+        db.session.execute(text('SELECT 1'))
+        return {'status': 'healthy', 'database': 'connected'}, 200
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e)}, 500
+
 @app.route('/how-it-works')
 def how_it_works():
     """Visual guide to time-for-token exchange"""
@@ -186,34 +197,40 @@ def register():
         return redirect(url_for('dashboard'))
     
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        
-        if User.query.filter_by(username=username).first():
-            flash('Username already exists', 'error')
+        try:
+            username = request.form.get('username')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            
+            if User.query.filter_by(username=username).first():
+                flash('Username already exists', 'error')
+                return redirect(url_for('register'))
+            
+            if User.query.filter_by(email=email).first():
+                flash('Email already registered', 'error')
+                return redirect(url_for('register'))
+            
+            user = User(
+                username=username,
+                email=email,
+                wallet_address=generate_wallet_address()
+            )
+            user.set_password(password)
+            
+            db.session.add(user)
+            db.session.commit()
+            
+            # Create welcome bonus transaction
+            create_transaction(None, user, 10.0, 'bonus', 'Welcome bonus - 10 time tokens!')
+            db.session.commit()
+            
+            flash(f'Account created! Your wallet: {user.wallet_address}', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            print(f'Registration error: {e}')
+            flash('An error occurred during registration. Please try again.', 'error')
             return redirect(url_for('register'))
-        
-        if User.query.filter_by(email=email).first():
-            flash('Email already registered', 'error')
-            return redirect(url_for('register'))
-        
-        user = User(
-            username=username,
-            email=email,
-            wallet_address=generate_wallet_address()
-        )
-        user.set_password(password)
-        
-        db.session.add(user)
-        db.session.commit()
-        
-        # Create welcome bonus transaction
-        create_transaction(None, user, 10.0, 'bonus', 'Welcome bonus - 10 time tokens!')
-        db.session.commit()
-        
-        flash(f'Account created! Your wallet: {user.wallet_address}', 'success')
-        return redirect(url_for('login'))
     
     return render_template('register.html')
 
@@ -224,17 +241,21 @@ def login():
         return redirect(url_for('dashboard'))
     
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        
-        user = User.query.filter_by(username=username).first()
-        
-        if user and user.check_password(password):
-            login_user(user)
-            flash('Login successful!', 'success')
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid username or password', 'error')
+        try:
+            username = request.form.get('username')
+            password = request.form.get('password')
+            
+            user = User.query.filter_by(username=username).first()
+            
+            if user and user.check_password(password):
+                login_user(user)
+                flash('Login successful!', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Invalid username or password', 'error')
+        except Exception as e:
+            print(f'Login error: {e}')
+            flash('An error occurred during login. Please try again.', 'error')
     
     return render_template('login.html')
 
