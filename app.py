@@ -12,18 +12,7 @@ import secrets
 import os
 
 application = Flask(__name__)
-application.config['SECRET_KEY'] = secrets.token_hex(16)
-application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///timebank.db'
-application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(application)
-login_manager = LoginManager(application)
-login_manager.login_view = 'login'
-
-# Alias for convenience
-app = application
-
-# ==================== DATABASE MODELS ====================
+application.config['SECRET_KEY'] = secrets.token_hex(16)========= DATABASE MODELS ====================
 
 class User(UserMixin, db.Model):
     """User model with wallet and reputation system"""
