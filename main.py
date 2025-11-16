@@ -15,7 +15,13 @@ import os
 app = Flask(__name__)
 
 # Configuration for production and development
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(16))
+# Use a consistent SECRET_KEY (important for sessions)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['REMEMBER_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['REMEMBER_COOKIE_HTTPONLY'] = True
 
 # Supabase PostgreSQL Database URL
 # Using Session Pooler (IPv4 compatible for Render)
@@ -202,14 +208,19 @@ def register():
             email = request.form.get('email')
             password = request.form.get('password')
             
+            print(f'Registration attempt: {username}, {email}')
+            
             if User.query.filter_by(username=username).first():
+                print(f'Username already exists: {username}')
                 flash('Username already exists', 'error')
                 return redirect(url_for('register'))
             
             if User.query.filter_by(email=email).first():
+                print(f'Email already registered: {email}')
                 flash('Email already registered', 'error')
                 return redirect(url_for('register'))
             
+            print('Creating new user...')
             user = User(
                 username=username,
                 email=email,
@@ -218,18 +229,24 @@ def register():
             user.set_password(password)
             
             db.session.add(user)
-            db.session.commit()
+            db.session.flush()  # Get the user ID
+            print(f'User created with ID: {user.id}')
             
             # Create welcome bonus transaction
+            print('Creating welcome transaction...')
             create_transaction(None, user, 10.0, 'bonus', 'Welcome bonus - 10 time tokens!')
+            
             db.session.commit()
+            print('Registration successful')
             
             flash(f'Account created! Your wallet: {user.wallet_address}', 'success')
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
             print(f'Registration error: {e}')
-            flash('An error occurred during registration. Please try again.', 'error')
+            import traceback
+            traceback.print_exc()
+            flash(f'An error occurred during registration: {str(e)}', 'error')
             return redirect(url_for('register'))
     
     return render_template('register.html')
@@ -245,16 +262,28 @@ def login():
             username = request.form.get('username')
             password = request.form.get('password')
             
+            print(f'Login attempt for user: {username}')
+            
             user = User.query.filter_by(username=username).first()
             
-            if user and user.check_password(password):
-                login_user(user)
-                flash('Login successful!', 'success')
-                return redirect(url_for('dashboard'))
+            if user:
+                print(f'User found: {user.username}')
+                if user.check_password(password):
+                    print('Password correct, logging in...')
+                    login_user(user, remember=True)
+                    print('Login successful')
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('dashboard'))
+                else:
+                    print('Password incorrect')
+                    flash('Invalid username or password', 'error')
             else:
+                print(f'User not found: {username}')
                 flash('Invalid username or password', 'error')
         except Exception as e:
             print(f'Login error: {e}')
+            import traceback
+            traceback.print_exc()
             flash('An error occurred during login. Please try again.', 'error')
     
     return render_template('login.html')
