@@ -17,8 +17,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 
 # Supabase PostgreSQL Database URL
-# Direct connection (password without brackets)
-SUPABASE_DB_URL = 'postgresql://postgres:olawanle@db.mvpugxwlufztwqunjysf.supabase.co:5432/postgres'
+# Using Session Pooler (IPv4 compatible for Render)
+SUPABASE_DB_URL = 'postgresql://postgres.mvpugxwlufztwqunjysf:olawanle@aws-0-us-east-1.pooler.supabase.com:5432/postgres'
 
 # Use environment variable, or Supabase URL, or fallback to SQLite for local dev
 # When deployed to Render, it will use the DATABASE_URL from environment
