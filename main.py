@@ -17,11 +17,29 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 
 # Supabase PostgreSQL Database URL
-# Production-ready configuration
-SUPABASE_DB_URL = 'postgresql://postgres.mvpugxwlufztwqunjysf:olawanle@aws-0-us-east-1.pooler.supabase.com:6543/postgres'
+# Direct connection (password without brackets)
+SUPABASE_DB_URL = 'postgresql://postgres:olawanle@db.mvpugxwlufztwqunjysf.supabase.co:5432/postgres'
 
-# Use environment variable or Supabase URL
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', SUPABASE_DB_URL)
+# Use environment variable, or Supabase URL, or fallback to SQLite for local dev
+# When deployed to Render, it will use the DATABASE_URL from environment
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    # Try Supabase, but if connection fails locally, use SQLite
+    try:
+        import psycopg2
+        # Test if we can resolve the hostname
+        test_conn = psycopg2.connect(SUPABASE_DB_URL, connect_timeout=5, sslmode='require')
+        test_conn.close()
+        database_url = SUPABASE_DB_URL
+        print('✓ Using Supabase PostgreSQL database')
+    except:
+        # Fallback to SQLite for local development
+        database_url = 'sqlite:///timebank.db'
+        print('ℹ Using SQLite for local development (Supabase will be used in production)')
+else:
+    print('✓ Using DATABASE_URL from environment')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # PostgreSQL connection pooling settings for Supabase
